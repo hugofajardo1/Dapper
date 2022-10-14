@@ -17,6 +17,7 @@ namespace DapperCrudTutorial.Controllers
             _config = config;
         }
 
+        //METODO QUE DEVUELVE TODOS LOS SUPERHEROES
         [HttpGet]
         public async Task<ActionResult<List<SuperHero>>> GetAllSuperHeroes()
         {
@@ -25,6 +26,7 @@ namespace DapperCrudTutorial.Controllers
             return Ok(heroes);
         }
 
+        //METODO QUE DEVUELVE UN SUPERHEROE DE ACUERDO AL ID INGRESADO
         [HttpGet("{heroId}")]
         public async Task<ActionResult<SuperHero>> GetHero(int heroId)
         {
@@ -41,6 +43,7 @@ namespace DapperCrudTutorial.Controllers
             return Ok(hero);
         }
 
+        //METODO QUE CARGA UN SUPERHEROE
         [HttpPost]
         public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero hero)
         {
@@ -49,6 +52,7 @@ namespace DapperCrudTutorial.Controllers
             return Ok(await SelectAllHeroes(connection));
         }
 
+        //METODO QUE MODIFICA UN SUPERHEROE
         [HttpPut]
         public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero hero)
         {
@@ -57,6 +61,7 @@ namespace DapperCrudTutorial.Controllers
             return Ok(await SelectAllHeroes(connection));
         }
 
+        //METODO QUE CARGA UN SUPERHEROE
         [HttpDelete("{heroId}")]
         public async Task<ActionResult<List<SuperHero>>> DeleteHero(int heroId)
         {
@@ -65,6 +70,7 @@ namespace DapperCrudTutorial.Controllers
             return Ok(await SelectAllHeroes(connection));
         }
 
+        //METODO REFACTORIZADO QUE DEVUELVE TODOS LOS SUPERHEROES
         private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
         {
             return await connection.QueryAsync<SuperHero>("select * from superheroes");
