@@ -73,7 +73,7 @@ namespace DapperCrudTutorial.Controllers
         //METODO REFACTORIZADO QUE DEVUELVE TODOS LOS SUPERHEROES
         private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
         {
-            return await connection.QueryAsync<SuperHero>("select * from superheroes");
+            return await connection.QueryAsync<SuperHero>("SELECT * FROM SuperHeroes");
         }
     }
 }
