@@ -30,9 +30,10 @@ namespace DapperCrudTutorial.Controllers
         [HttpGet("{heroId}")]
         public async Task<ActionResult<SuperHero>> GetHero(int heroId)
         {
-            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            //using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             //var hero = await connection.QueryFirstAsync<SuperHero>("SELECT * FROM SuperHeroes WHERE Id = @Id",
             //        new { Id = heroId });
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var sql = @"SELECT * FROM SuperHeroes LEFT JOIN CharacterTypes ON SuperHeroes.CharacterTypeId = CharacterTypes.Id WHERE SuperHeroes.Id = @Id Order by SuperHeroes.Id";
             var hero = await connection.QueryAsync<SuperHero, CharacterType, SuperHero>(sql, (superHero, characterType) => 
             { 
