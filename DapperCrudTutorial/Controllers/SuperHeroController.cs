@@ -27,19 +27,16 @@ namespace DapperCrudTutorial.Controllers
         }
 
         //METODO QUE DEVUELVE UN SUPERHEROE DE ACUERDO AL ID INGRESADO
-        [HttpGet("{heroId}")]
-        public async Task<ActionResult<SuperHero>> GetHero(int heroId)
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<SuperHero>> GetHero(int Id)
         {
-            //using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            //var hero = await connection.QueryFirstAsync<SuperHero>("SELECT * FROM SuperHeroes WHERE Id = @Id",
-            //        new { Id = heroId });
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var sql = "SELECT * FROM SuperHeroes LEFT JOIN CharacterTypes ON SuperHeroes.CharacterTypeId = CharacterTypes.Id WHERE SuperHeroes.Id = @Id Order by SuperHeroes.Id";
             var hero = await connection.QueryAsync<SuperHero, CharacterType, SuperHero>(sql, (superHero, characterType) => 
             { 
                 superHero.CharacterType = characterType; 
                 return superHero; 
-            }, new { Id = heroId }, splitOn: "CharacterTypeId");
+            }, new { Id = Id }, splitOn: "CharacterTypeId");
             
             return Ok(hero);
         }
@@ -69,11 +66,11 @@ namespace DapperCrudTutorial.Controllers
         }
 
         //METODO QUE CARGA UN SUPERHEROE
-        [HttpDelete("{heroId}")]
-        public async Task<ActionResult<List<SuperHero>>> DeleteHero(int heroId)
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<List<SuperHero>>> DeleteHero(int Id)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            await connection.ExecuteAsync("DELETE FROM SuperHeroes WHERE Id = @Id", new { Id = heroId });
+            await connection.ExecuteAsync("DELETE FROM SuperHeroes WHERE Id = @Id", new { Id = Id });
             return Ok(await SelectAllHeroes(connection));
         }
 
