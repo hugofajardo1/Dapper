@@ -34,7 +34,7 @@ namespace DapperCrudTutorial.Controllers
             //var hero = await connection.QueryFirstAsync<SuperHero>("SELECT * FROM SuperHeroes WHERE Id = @Id",
             //        new { Id = heroId });
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            var sql = @"SELECT * FROM SuperHeroes LEFT JOIN CharacterTypes ON SuperHeroes.CharacterTypeId = CharacterTypes.Id WHERE SuperHeroes.Id = @Id Order by SuperHeroes.Id";
+            var sql = "SELECT * FROM SuperHeroes LEFT JOIN CharacterTypes ON SuperHeroes.CharacterTypeId = CharacterTypes.Id WHERE SuperHeroes.Id = @Id Order by SuperHeroes.Id";
             var hero = await connection.QueryAsync<SuperHero, CharacterType, SuperHero>(sql, (superHero, characterType) => 
             { 
                 superHero.CharacterType = characterType; 
@@ -75,7 +75,14 @@ namespace DapperCrudTutorial.Controllers
         //METODO REFACTORIZADO QUE DEVUELVE TODOS LOS SUPERHEROES
         private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
         {
-            return await connection.QueryAsync<SuperHero>("SELECT * FROM SuperHeroes");
+            var sql = "SELECT * FROM SuperHeroes LEFT JOIN CharacterTypes ON SuperHeroes.CharacterTypeId = CharacterTypes.Id ORDER BY SuperHeroes.Id";
+            var hero = await connection.QueryAsync<SuperHero, CharacterType, SuperHero>(sql, (superHero, characterType) =>
+            {
+                superHero.CharacterType = characterType;
+                return superHero;
+            }, splitOn: "CharacterTypeId");
+
+            return hero;
         }
     }
 }
