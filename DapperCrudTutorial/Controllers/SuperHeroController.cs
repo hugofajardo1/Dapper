@@ -60,11 +60,11 @@ namespace DapperCrudTutorial.Controllers
 
         //METODO QUE MODIFICA UN SUPERHEROE
         [HttpPut]
-        public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero hero)
+        public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero superHero)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var sql = "UPDATE SuperHeroes SET Name = @Name, FirstName = @FirstName, LastName = @LastName, Place = @Place, CharacterTypeId = @CharacterTypeId WHERE Id = @Id";
-            await connection.ExecuteAsync(sql, new { Name = hero.Name, FirstName = hero.FirstName, LastName = hero.Lastname, Place = hero.Place, CharacterTypeId = hero.CharacterType.Id });
+            await connection.ExecuteAsync(sql, new {Id = superHero.Id, Name = superHero.Name, FirstName = superHero.FirstName, LastName = superHero.Lastname, Place = superHero.Place, CharacterTypeId = superHero.CharacterType.Id });
             return Ok(await SelectAllHeroes(connection));
         }
 
