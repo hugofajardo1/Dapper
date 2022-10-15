@@ -49,7 +49,8 @@ namespace DapperCrudTutorial.Controllers
         public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero hero)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            await connection.ExecuteAsync("INSERT INTO SuperHeroes (name, firstname, lastname, place, charactertypeId) VALUES (@Name, @FirstName, @LastName, @Place, @CharacterTypeId)", hero);
+            var sql = "INSERT INTO SuperHeroes (Name, FirstName, LastName, Place, CharacterTypeId) VALUES (@Name, @FirstName, @LastName, @Place, @CharacterTypeId)";
+            await connection.ExecuteAsync(sql, new { Name = hero.Name, FirstName = hero.FirstName, LastName = hero.Lastname, Place = hero.Place, CharacterTypeId = hero.CharacterType.Id});
             return Ok(await SelectAllHeroes(connection));
         }
 
