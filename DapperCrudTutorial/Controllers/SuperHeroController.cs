@@ -46,11 +46,15 @@ namespace DapperCrudTutorial.Controllers
 
         //METODO QUE CARGA UN SUPERHEROE
         [HttpPost]
-        public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero hero)
+        public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero superHero)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var sql = "INSERT INTO SuperHeroes (Name, FirstName, LastName, Place, CharacterTypeId) VALUES (@Name, @FirstName, @LastName, @Place, @CharacterTypeId)";
-            await connection.ExecuteAsync(sql, new { Name = hero.Name, FirstName = hero.FirstName, LastName = hero.Lastname, Place = hero.Place, CharacterTypeId = hero.CharacterType.Id});
+            var hero = await connection.QueryAsync<SuperHero, CharacterType, SuperHero>(sql, (superHero, characterType) =>
+            {
+                superHero.CharacterType = characterType;
+                return superHero;
+            }, new { Id = superHero.Id }, splitOn: "CharacterTypeId");
             return Ok(await SelectAllHeroes(connection));
         }
 
@@ -59,7 +63,8 @@ namespace DapperCrudTutorial.Controllers
         public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero hero)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            await connection.ExecuteAsync("UPDATE SuperHeroes SET name = @Name, firstname = @FirstName, lastname = @LastName, place = @Place where id = @Id", hero);
+            var sql = "UPDATE SuperHeroes SET Name = @Name, FirstName = @FirstName, LastName = @LastName, Place = @Place, CharacterTypeId = @CharacterTypeId WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Name = hero.Name, FirstName = hero.FirstName, LastName = hero.Lastname, Place = hero.Place, CharacterTypeId = hero.CharacterType.Id });
             return Ok(await SelectAllHeroes(connection));
         }
 
