@@ -33,6 +33,15 @@ namespace DapperCrudTutorial.Controllers
             return Ok(characterType);
         }
 
+        //METODO QUE CARGA UN SUPERHEROE
+        [HttpPost]
+        public async Task<ActionResult<List<CharacterType>>> CreateCharacterType(CharacterType characterType)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            var sql = "INSERT INTO CharacterTypes (Name) VALUES (@Name)";
+            var character = await connection.QueryAsync<CharacterType>(sql, characterType);
+            return Ok(await SelectAllCharacterTypes(connection));
+        }
 
         //METODO REFACTORIZADO QUE DEVUELVE TODOS LOS CHARACTER
         private static async Task<IEnumerable<CharacterType>> SelectAllCharacterTypes(SqlConnection connection)
