@@ -5,17 +5,19 @@ using System.Data.SqlClient;
 
 namespace DapperCrudTutorial.Controllers
 {
+    /// <summary>
+    /// Servicios para crear, listar, modificar o borrar CharacterType de los SuperHeroes
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CharacterTypeController : ControllerBase
     {
         private readonly IConfiguration _config;
-
         public CharacterTypeController(IConfiguration config)
         {
             _config = config;
         }
-        //METODO QUE DEVUELVE TODOS LOS CharacterType
+        /// <summary>Obtiene todos los objetos CharacterType</summary>
         [HttpGet]
         public async Task<ActionResult<List<CharacterType>>> GetAllCharacterTypes()
         {
@@ -24,7 +26,8 @@ namespace DapperCrudTutorial.Controllers
             return Ok(characterTypes);
         }
 
-        //METODO QUE DEVUELVE UN CharacterType DE ACUERDO AL ID INGRESADO
+        /// <summary>Obtiene un objeto CharacterType</summary>
+        /// <param name="Id">CharacterType.Id a buscar</param>
         [HttpGet("{Id}")]
         public async Task<ActionResult<CharacterType>> GetCharacterType(int Id)
         {
@@ -33,13 +36,62 @@ namespace DapperCrudTutorial.Controllers
             return Ok(characterType);
         }
 
-        //METODO QUE CARGA UN SUPERHEROE
+        /// <summary>Crea un objeto CharacterType</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST
+        ///     {
+        ///        "name": "CharacterType"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="characterType">CharacterType</param>
         [HttpPost]
         public async Task<ActionResult<List<CharacterType>>> CreateCharacterType(CharacterType characterType)
         {
             using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var sql = "INSERT INTO CharacterTypes (Name) VALUES (@Name)";
             var character = await connection.QueryAsync<CharacterType>(sql, characterType);
+            return Ok(await SelectAllCharacterTypes(connection));
+        }
+
+        /// <summary>Modifica un objeto CharacterType</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     PUT
+        ///     {
+        ///        "id": 1,
+        ///        "name": "CharacterType"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="characterType">CharacterType</param>
+        [HttpPut]
+        public async Task<ActionResult<List<CharacterType>>> UpdateCharacterType(CharacterType characterType)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            var sql = "UPDATE CharacterType SET Name = @Name WHERE Id = @Id";
+            await connection.ExecuteAsync(sql, new { Id = characterType.Id, Name = characterType.Name });
+            return Ok(await SelectAllCharacterTypes(connection));
+        }
+
+        /// <summary>Elimina un objeto CharacterType</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     DELETE
+        ///     {
+        ///        "id": 1
+        ///     }
+        ///
+        /// </remarks>
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<List<CharacterType>>> DeleteCharacterType(int Id)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.ExecuteAsync("DELETE FROM CharacterTypes WHERE Id = @Id", new { Id = Id });
             return Ok(await SelectAllCharacterTypes(connection));
         }
 

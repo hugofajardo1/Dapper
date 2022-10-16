@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace DapperCrudTutorial.Controllers
 {
+    /// <summary>
+    /// Servicios para crear, listar, modificar o borrar SuperHeroes
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SuperHeroController : ControllerBase
@@ -17,7 +20,7 @@ namespace DapperCrudTutorial.Controllers
             _config = config;
         }
 
-        //METODO QUE DEVUELVE TODOS LOS SUPERHEROES
+        /// <summary>Obtiene todos los objetos SuperHeroes</summary>
         [HttpGet]
         public async Task<ActionResult<List<SuperHero>>> GetAllSuperHeroes()
         {
@@ -26,7 +29,8 @@ namespace DapperCrudTutorial.Controllers
             return Ok(heroes);
         }
 
-        //METODO QUE DEVUELVE UN SUPERHEROE DE ACUERDO AL ID INGRESADO
+        /// <summary>Obtiene un objeto SuperHero</summary>
+        /// <param name="Id">SuperHero.Id a buscar</param>
         [HttpGet("{Id}")]
         public async Task<ActionResult<SuperHero>> GetHero(int Id)
         {
@@ -41,7 +45,21 @@ namespace DapperCrudTutorial.Controllers
             return Ok(hero);
         }
 
-        //METODO QUE CARGA UN SUPERHEROE
+        /// <summary>Crea un objeto SuperHero</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST
+        ///     {
+        ///        "name": "name",
+        ///        "firstname": "firstname",
+        ///        "lastname": "lastname",
+        ///        "place": "place",
+        ///        "characterTypeId": "CharacterTypeId"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="superHero">SuperHero</param>
         [HttpPost]
         public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero superHero)
         {
@@ -55,7 +73,22 @@ namespace DapperCrudTutorial.Controllers
             return Ok(await SelectAllHeroes(connection));
         }
 
-        //METODO QUE MODIFICA UN SUPERHEROE
+        /// <summary>Modifica un objeto SuperHero</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     PUT
+        ///     {
+        ///        "id": 1,
+        ///        "name": "name",
+        ///        "firstname": "firstname",
+        ///        "lastname": "lastname",
+        ///        "place": "place",
+        ///        "characterTypeId": "CharacterTypeId"
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="superHero">SuperHero</param>
         [HttpPut]
         public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero superHero)
         {
@@ -65,7 +98,16 @@ namespace DapperCrudTutorial.Controllers
             return Ok(await SelectAllHeroes(connection));
         }
 
-        //METODO QUE CARGA UN SUPERHEROE
+        /// <summary>Elimina un objeto SuperHero</summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     DELETE
+        ///     {
+        ///        "id": 1
+        ///     }
+        ///
+        /// </remarks>
         [HttpDelete("{Id}")]
         public async Task<ActionResult<List<SuperHero>>> DeleteHero(int Id)
         {
